@@ -5,8 +5,6 @@
 
 ## 环境准备
 
-
-
 ```shell
 
 #根据规划设置主机名
@@ -78,11 +76,17 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
   "registry-mirrors": ["https://s2q9fn53.mirror.aliyuncs.com"]
 }
 EOF
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+sudo systemctl daemon-reload && sudo systemctl restart docker
 ```
 
 ## 安装kubelet、kubeadm、kubectl
+
+- kubeadm：用来初始化集群的指令。
+- kubelet：在集群中的每个节点上用来启动 pod 和容器等。
+- kubectl：用来与集群通信的命令行工具。
+
+kubeadm 不能 帮您安装或者管理 kubelet 或 kubectl，所以您需要确保它们与通过 kubeadm 安装的控制平面的版本相匹配。 如果不这样做，则存在发生版本偏差的风险，可能会导致一些预料之外的错误和问题。 然而，控制平面与 kubelet 间的相差一个次要版本不一致是支持的，但 kubelet 的版本不可以超过 API 服务器的版本。 例如，1.7.0 版本的 kubelet 可以完全兼容 1.8.0 版本的 API 服务器，反之则不可以。
+
 ```shell
 #添加kubernetes阿里YUM源
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
@@ -117,17 +121,17 @@ kube-proxy:v1.19.4
 pause:3.2
 etcd:3.4.13-0
 coredns:1.7.0'
-for item in ${list}
+for item in \$list
   do
 
-    docker pull registry.aliyuncs.com/google_containers/$item && docker tag registry.aliyuncs.com/google_containers/$item k8s.gcr.io/$item && docker rmi registry.aliyuncs.com/google_containers/$item
+    docker pull registry.aliyuncs.com/google_containers/\$item && docker tag registry.aliyuncs.com/google_containers/\$item k8s.gcr.io/\$item && docker rmi registry.aliyuncs.com/google_containers/\$item
 
   done
-#下载flannel网络插件
-docker pull quay.io/coreos/flannel:v0.13.1-rc1
 EOF
 #运行脚本下载
 bash alik8simages.sh
+
+
 
 #初始化k8s集群
 kubeadm init \
@@ -154,5 +158,9 @@ kubeadm join 192.168.1.200:6443 --token ...
 #### 部署CNI网络插件
 
 ```shell
+
+#下载flannel网络插件
+docker pull quay.io/coreos/flannel:v0.13.1-rc1
+
 kubectl apply -f kube-flannel.yml
 ```
