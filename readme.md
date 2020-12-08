@@ -8,34 +8,38 @@
 
 ```shell
 
-#根据规划设置主机名
+#根据规划设置主机名(在3台机上分别运行)
 hostnamectl set-hostname master01
 hostnamectl set-hostname node01
 hostnamectl set-hostname node02
 
-#在master添加hosts
+#在master添加hosts(在msster上运行)
 cat >> /etc/hosts << EOF
 192.168.0.200 master01
 192.168.0.201 node01
 192.168.0.202 node02
 EOF
 
-#设置免登录
+#设置免登录(在msster上运行)
 ssh-keygen
 ssh-copy-id root@node01
 ssh-copy-id root@node02
 
-#关闭防火墙
+#把hosts文件复制到node01\02(在msster上运行)
+scp /etc/hosts root@node01:/etc/hosts
+scp /etc/hosts root@node02:/etc/hosts
+
+#关闭防火墙(在3台机运行)
 systemctl stop firewalld && systemctl disable firewalld
 
-#关闭selinux
+#关闭selinux(在3台机运行)
 sed -i 's/enforcing/disabled/' /etc/selinux/config && setenforce 0
 
-#关闭swap
+#关闭swap(在3台机运行)
 swapoff -a && sed -ri 's/.*swap.*/#&/' /etc/fstab
 
 
-#时间同步
+#时间同步(在3台机运行)
 yum install ntpdate -y && ntpdate time.windows.com
 
 ```
