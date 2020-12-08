@@ -12,5 +12,3 @@ for item in ${list}
     docker pull registry.aliyuncs.com/google_containers/$item && docker tag registry.aliyuncs.com/google_containers/$item k8s.gcr.io/$item && docker rmi registry.aliyuncs.com/google_containers/$item
 
   done
-#下载flannel网络插件
-docker pull quay.io/coreos/flannel:v0.13.1-rc1
