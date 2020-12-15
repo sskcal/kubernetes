@@ -12,3 +12,8 @@ for item in ${list}
     docker pull registry.aliyuncs.com/google_containers/$item && docker tag registry.aliyuncs.com/google_containers/$item k8s.gcr.io/$item && docker rmi registry.aliyuncs.com/google_containers/$item
 
   done
+
+#上面过程
+#docker pull registry.aliyuncs.com/google_containers/kube-apiserver:v1.19.5
+#docker tag registry.aliyuncs.com/google_containers/kube-apiserver:v1.19.5 k8s.gcr.io/kube-apiserver:v1.19.5
+#docker rmi registry.aliyuncs.com/google_containers/kube-apiserver:v1.19.5

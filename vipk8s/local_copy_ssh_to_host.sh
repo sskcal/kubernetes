@@ -1,5 +1,6 @@
 #!/bin/bash
 #批量复制公匙到服务器
+#记得先执行这条命令生成公匙：ssh-keygen
 password=123456
 
 for i in {200,201,202,210}

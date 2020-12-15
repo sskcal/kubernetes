@@ -1,5 +1,5 @@
 ---
-- hosts: k8s
+- hosts: k8smaster
   gather_facts: no
   vars:
     - master_ip: 192.168.0.200
@@ -16,6 +16,7 @@
       shell:
         cmd: |
           cat >> /etc/hosts << EOF
+          192.168.0.199 k8svip
           192.168.0.200 master01
           192.168.0.201 master02
           192.168.0.202 master03

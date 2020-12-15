@@ -1,5 +1,8 @@
 # 部署高可用kubernetes集群
 
+视频教程：
+https://www.bilibili.com/video/bv15z4y1r7Kw
+
 ## 准备开始
 
 - 配置三台机器 kubeadm 的最低要求 给主节点

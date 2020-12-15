@@ -1,5 +1,7 @@
 # 安装kubernetes集群
 
+视频教程：https://www.bilibili.com/video/BV1gy4y1B7LB/
+
 ## 安装前准备
 1、准备3台，2G或更大内存，2核或以上CPU，30G以上硬盘 物理机或云主机或虚拟机
 2、系统centos 7.x
