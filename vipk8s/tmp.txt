@@ -1,0 +1,3 @@
+
+
+kubeadm init --control-plane-endpoint k8svip:8443 --kubernetes-version=v1.19.4 --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --upload-certs

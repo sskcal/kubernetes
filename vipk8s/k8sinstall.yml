@@ -1,0 +1,112 @@
+---
+- hosts: k8s
+  gather_facts: no
+  vars:
+    - master_ip: 192.168.0.200
+    - k8s_version: 1.19.4
+    - docker_version: 20.10.0
+  tasks:
+    - name: set hostname
+      shell: |
+        hostnamectl set-hostname {{ hostname }}
+        if [ ! -d /root/k8s ] ; then mkdir /root/k8s ; fi
+        if [ ! -d /etc/docker ] ; then mkdir /etc/docker ; fi
+      ignore_errors: True
+    - name: config hosts
+      shell:
+        cmd: |
+          cat >> /etc/hosts << EOF
+          192.168.0.200 master01
+          192.168.0.201 master02
+          192.168.0.202 master03
+          192.168.0.210 worker01
+          EOF
+    - name: close firewalld
+      service:
+        name: firewalld
+        state: stopped
+        enabled: no
+    - name: temp close selinux
+      shell: /sbin/setenforce 0
+    - name: premanment close selinux
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: SELINUX=disabled
+    - name: close swap
+      shell: swapoff -a && sed -ri 's/.*swap.*/#&/' /etc/fstab
+    - name: install yum_tools
+      yum:
+        name: yum-utils
+    - name: download docker repo
+      shell: yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+    - name: install docker need tools and docker-ce
+      yum: 
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - device-mapper-persistent-data
+          - lvm2
+          - ntpdate
+          - docker-ce-{{ docker_version }}
+    - name: config docker daemon
+      copy:
+        src: ./etc/docker/daemon.json
+        dest: /etc/docker/daemon.json
+    - name: start docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: sync time
+      shell: "ntpdate time.windows.com"
+    - name: set kubernetes yam repo
+      shell:
+        cmd: |
+          cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+          [kubernetes]
+          name=Kubernetes
+          baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+          enabled=1
+          gpgcheck=1
+          repo_gpgcheck=1
+          gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+          EOF
+    - name: install kubernetes
+      yum:
+        name: 
+          - kubelet-{{ k8s_version }}
+          - kubeadm-{{ k8s_version }}
+          - kubectl-{{ k8s_version }}
+    - name: start kubelet
+      service:
+        name: kubelet
+        state: started
+        enabled: yes
+    - name: copy alik8simages.sh
+      copy:
+        src: ./k8s
+        dest: /root/
+    - name: pull alik8simages
+      shell: bash ./alik8simages.sh
+      args:
+        chdir: /root/k8s/
+    - name: pull flannel
+      shell: docker pull quay.io/coreos/flannel:v0.13.1-rc1
+    # - name: kubeadm init
+    #   shell: "kubeadm init --apiserver-advertise-address={{ master_ip }} --kubernetes-version=v{{ k8s_version }} --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16"
+    #   when:
+    #     - hostname.find("master01") > -1
+    # - name: config
+    #   shell: |
+    #     mkdir -p $HOME/.kube
+    #     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    #     chown $(id -u):$(id -g) $HOME/.kube/config
+    #    when:
+    #     - hostname.find("master01") > -1
+    # - name: apply flannel  
+    #   shell: kubectl apply -f ./kube-flannel.yml
+    #   args:
+    #     chdir: /root/k8s/
+    #   when:
+    #     - hostname.find("master01") > -1
