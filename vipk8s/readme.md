@@ -236,8 +236,24 @@ kubeadm join k8svip:8443 --token s8nl1g.samn73s2wzmpvl1x \
 
 ```shell
 
-#下载flannel网络插件
+#下载flannel网络插件,master\worker主机都需要执行
 docker pull quay.io/coreos/flannel:v0.13.1-rc1
 
 kubectl apply -f kube-flannel.yml
+```
+
+
+
+
+# 问题解决记录
+1、解决k8s集群在节点运行kubectl出现的错误：
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+出现这个问题的原因是kubectl命令需要使用kubernetes-admin来运行
+在master主机上复制此文件到worker主机上：/etc/kubernetes/admin.conf
+```
+#在master上运行
+scp /etc/kubernetes/admin.conf root@worker01:/etc/kubernetes/
+#在worker01上运行
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.bash_profile
+source ~/.bash_profile
 ```

@@ -1,3 +1,7 @@
 {
-    "registry-mirrors": ["https://s2q9fn53.mirror.aliyuncs.com"]
+    "registry-mirrors": ["https://s2q9fn53.mirror.aliyuncs.com"],
+    "exec-opts": ["native.cgroupdriver=systemd"],
+    "log-opts": {
+        "max-size": "100m"
+    }
 }
