@@ -3,7 +3,9 @@
 视频教程：https://www.bilibili.com/video/BV1gy4y1B7LB/
 
 ## 安装前准备
+
 1、准备3台，2G或更大内存，2核或以上CPU，30G以上硬盘 物理机或云主机或虚拟机
+
 2、系统centos 7.x
 
 ## 环境准备
@@ -42,7 +44,7 @@ swapoff -a && sed -ri 's/.*swap.*/#&/' /etc/fstab
 
 
 #时间同步(在3台机运行)
-yum install ntpdate -y && ntpdate time.windows.com
+yum install ntpdate -y && timedatectl set-timezone Asia/Shanghai  && ntpdate time.windows.com
 
 ```
 
@@ -80,6 +82,7 @@ sudo systemctl start docker && systemctl enable docker
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
+  "exec-opts": ["native.cgroupdriver=systemd"],
   "registry-mirrors": ["https://s2q9fn53.mirror.aliyuncs.com"]
 }
 EOF
@@ -162,7 +165,18 @@ kubectl get nodes
 #接着把提示如下的语句复制到node节点运行
 kubeadm join 192.168.1.200:6443 --token ...
 ```
-#### 部署CNI网络插件
+
+### 遇到的问题
+
+**Kubeadm init过程中报错**：`[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1`
+
+**解决方法**：
+
+```shell
+echo "1" >/proc/sys/net/bridge/bridge-nf-call-iptables
+```
+
+## 部署CNI网络插件
 
 ```shell
 
