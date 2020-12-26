@@ -45,6 +45,10 @@ https://192.168.0.199:3xxxx
 
 # 登录
 ```bash
+#创建服务账户
+kubectl apply -f ./dashboard-adminuser.yaml
+#创建一个ClusterRoleBinding
+kubectl apply -f ./dashboard-ClusterRoleBinding.yaml
 
 #获取token
 kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
