@@ -195,8 +195,9 @@ spec:
           args:
             - --auto-generate-certificates
             - --namespace=kubernetes-dashboard
-            - --tls-key-file=dashboard.key
-            - --tls-cert-file=dashboard.crt
+            - --tls-key-file=apiserver.key
+            - --tls-cert-file=apiserver.crt
+            # 上面2行我加的 by sskcal
             # Uncomment the following line to manually specify Kubernetes API server Host
             # If not specified, Dashboard will attempt to auto discover the API server and connect
             # to it. Uncomment only if the default does not work.
