@@ -20,7 +20,6 @@ kubectl -n kubernetes-dashboard get svc
 #https://192.168.0.199:3xxxx
 
 
-#翻车。。。。接下来。。。往下看。。。
 ```
 
 
