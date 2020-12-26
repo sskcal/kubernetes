@@ -1,5 +1,8 @@
 # 部署 Dashboard UI
 
+## 视频教程(部署 Dashboard UI)
+https://www.bilibili.com/video/BV1Az4y1k7nn/
+
 默认情况下不会部署 Dashboard。可以通过以下命令部署：
 ```bash
 
