@@ -8,6 +8,10 @@
 
 官方文档地址：https://v1-19.docs.kubernetes.io/zh/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user
 
+## 搞不定的可以看视频教程
+https://www.bilibili.com/video/BV1TK4y157aR/
+
+觉得对你有帮助的话记得点赞收藏，谢谢！
 
 ## 普通用户
 kubernetes用户有2种，一种是账户，另一种是服务账户！我们这里来创建的是账户！
